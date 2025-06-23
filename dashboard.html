@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vermiculture Sensor Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f2f2f2; margin: 0; padding: 0; }
+    .header { background-color: #4CAF50; color: white; padding: 20px; text-align: center; }
+    .container { display: flex; flex-wrap: wrap; justify-content: center; margin: 20px; }
+    .card { background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 10px; padding: 20px; width: 200px; text-align: center; }
+    .value { font-size: 2em; margin: 10px 0; }
+    .label { font-size: 1em; color: #555; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Sensor Dashboard</h1>
+  </div>
+  <div class="container">
+    <div class="card">
+      <div class="value" id="soilMoisture">--</div>
+      <div class="label">Soil Moisture</div>
+    </div>
+    <div class="card">
+      <div class="value" id="temperature">--</div>
+      <div class="label">Temperature (°C)</div>
+    </div>
+    <div class="card">
+      <div class="value" id="humidity">--</div>
+      <div class="label">Humidity (%)</div>
+    </div>
+    <div class="card">
+      <div class="value" id="gasLevel">--</div>
+      <div class="label">Gas Level (ppm)</div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Replace with your actual Firebase project configuration
+    // Ensure databaseURL follows the format: https://<YOUR_PROJECT_ID>.firebaseio.com
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      databaseURL: "https://<YOUR_PROJECT_ID>.firebaseio.com",  // e.g., https://my-project-12345.firebaseio.com
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Reference to your sensor readings in the Realtime Database
+    const readingsRef = ref(db, 'sensorReadings');
+
+    // Listen for real-time updates
+    onValue(readingsRef, snapshot => {
+      const data = snapshot.val() || {};
+      document.getElementById('soilMoisture').innerText = data.soilMoisture ?? 'N/A';
+      document.getElementById('temperature').innerText  = data.temperature ?? 'N/A';
+      document.getElementById('humidity').innerText     = data.humidity ?? 'N/A';
+      document.getElementById('gasLevel').innerText     = data.gasLevel ?? 'N/A';
+    });
+  </script>
+</body>
+</html>
